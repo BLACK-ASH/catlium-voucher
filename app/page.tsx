@@ -1,19 +1,160 @@
-import { Button } from "@/components/ui/button"
+"use client"
 
-export default function Page() {
+import { useRef } from "react";
+
+import { useVoucher } from "@/hooks/use-voucher"
+
+import {
+  ImageUpload,
+  OrganizationForm,
+  VoucherForm
+} from "@/components/form"
+
+import { Separator } from "@/components/ui/separator"
+
+import { VoucherPreview } from "@/components/voucher"
+
+import { ExportButton } from "@/components/export-button"
+
+import { PDFVoucher } from "@/components/pdf/pdf-voucher"
+
+
+
+export default function Home() {
+
+
+  const voucher =
+    useVoucher();
+
+
+  const pdfRef =
+    useRef<HTMLDivElement>(null);
+
+
+
   return (
-    <div className="flex min-h-svh p-6">
-      <div className="flex max-w-md min-w-0 flex-col gap-4 text-sm leading-loose">
-        <div>
-          <h1 className="font-medium">Project ready!</h1>
-          <p>You may now add components and start building.</p>
-          <p>We&apos;ve already added the button component for you.</p>
-          <Button className="mt-2">Button</Button>
+
+    <main className="grid h-screen grid-cols-5">
+
+
+      {/* LEFT */}
+
+      <aside
+        className="
+        col-span-2
+        overflow-y-auto
+        border-r
+        p-6
+        "
+      >
+
+
+        <h1 className="text-2xl font-bold">
+          Voucher Generator
+        </h1>
+
+
+        <div className="space-y-6 mt-6">
+
+
+          <OrganizationForm
+
+            organization={
+              voucher.voucher.organization
+            }
+
+            updateOrganization={
+              voucher.updateOrganization
+            }
+
+          />
+
+
+          <Separator />
+
+
+          <VoucherForm
+
+            voucher={
+              voucher.voucher
+            }
+
+            updateVoucher={
+              voucher.updateVoucher
+            }
+
+          />
+
+
+          <Separator />
+
+
+          <ImageUpload
+
+            images={
+              voucher.voucher.images
+            }
+
+            addImages={
+              voucher.addImages
+            }
+
+            removeImage={
+              voucher.removeImage
+            }
+
+          />
+
+
+          <ExportButton
+            pdfRef={pdfRef}
+          />
+
+
         </div>
-        <div className="font-mono text-xs text-muted-foreground">
-          (Press <kbd>d</kbd> to toggle dark mode)
-        </div>
+
+
+      </aside>
+
+
+
+      {/* PREVIEW */}
+
+      <section
+        className="
+        col-span-3
+        overflow-y-auto
+        bg-muted
+        p-10
+        "
+      >
+
+        <VoucherPreview
+          voucher={
+            voucher.voucher
+          }
+        />
+
+
+      </section>
+
+
+
+      {/* PDF ONLY */}
+
+      <div className="hidden">
+
+        <PDFVoucher
+          ref={pdfRef}
+          voucher={
+            voucher.voucher
+          }
+        />
+
       </div>
-    </div>
+
+
+    </main>
+
   )
 }
